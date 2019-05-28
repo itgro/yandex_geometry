@@ -102,8 +102,8 @@ class Point {
     List<String> strings = string.split(" ");
 
     return Point(
-      latitude: doubleFromString(strings.first),
-      longitude: doubleFromString(strings.last),
+      latitude: doubleFromString(strings.last),
+      longitude: doubleFromString(strings.first),
     );
   }
 
