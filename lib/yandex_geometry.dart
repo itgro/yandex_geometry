@@ -172,3 +172,67 @@ class Position {
   int get hashCode =>
       target.hashCode ^ tilt.hashCode ^ zoom.hashCode ^ azimuth.hashCode;
 }
+
+@immutable
+class BoundingBox {
+  final Point southWest;
+  final Point northEast;
+
+  BoundingBox({
+    @required this.southWest,
+    @required this.northEast,
+  });
+
+  Map toMap() => {
+        "southWest": southWest.toMap(),
+        "northEast": northEast.toMap(),
+      };
+
+  @override
+  String toString() {
+    return 'BoundingBox{southWest: $southWest, northEast: $northEast}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BoundingBox &&
+          runtimeType == other.runtimeType &&
+          southWest == other.southWest &&
+          northEast == other.northEast;
+
+  @override
+  int get hashCode => southWest.hashCode ^ northEast.hashCode;
+}
+
+@immutable
+class Distance {
+  final double value;
+  final String text;
+
+  Distance({
+    this.value,
+    this.text,
+  });
+
+  factory Distance.fromMap(Map map) => Distance(
+        value: doubleFromJson(map, "value"),
+        text: stringFromJson(map, "text"),
+      );
+
+  @override
+  String toString() {
+    return 'Distance{value: $value, text: $text}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Distance &&
+          runtimeType == other.runtimeType &&
+          value == other.value &&
+          text == other.text;
+
+  @override
+  int get hashCode => value.hashCode ^ text.hashCode;
+}

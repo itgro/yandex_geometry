@@ -37,6 +37,38 @@ double doubleFromString(String value, {double defaultValue}) {
   return defaultValue;
 }
 
+bool boolFromJson(Map model, field, {bool defaultValue}) {
+  dynamic value = valueFromJsonIfExists(model, field);
+
+  if (value is bool) {
+    return value;
+  }
+
+  if (value is String) {
+    switch (value) {
+      case "1":
+      case "true":
+      case "y":
+        return true;
+      case "0":
+      case "false":
+      case "n":
+        return true;
+    }
+  }
+
+  if (value is int) {
+    switch (value) {
+      case 1:
+        return true;
+      case 0:
+        return false;
+    }
+  }
+
+  return defaultValue;
+}
+
 int intFromJson(Map model, field, {int defaultValue}) {
   dynamic value = valueFromJsonIfExists(model, field);
 
@@ -75,15 +107,15 @@ String stringFromJson(Map model, field, {String defaultValue}) {
   return defaultValue;
 }
 
-List<E> collectionFromJson<E>(
-    Map model, String field, E Function(Map) factory) {
+List<E> collectionFromJson<E, T>(
+    Map model, String field, E Function(T) factory) {
   List<E> result = [];
 
   dynamic value = valueFromJsonIfExists(model, field);
 
   if (value is Iterable) {
     value.forEach((model) {
-      if (model is Map) {
+      if (model is T) {
         E item = factory(model);
 
         if (item != null) {
