@@ -1,5 +1,7 @@
 library yandex_geometry;
 
+import 'dart:math' as math;
+
 import 'package:flutter/widgets.dart';
 
 import 'json_conversion.dart';
@@ -93,6 +95,15 @@ class Point {
     @required this.longitude,
   });
 
+  Point add(double kilometers) {
+    return Point(
+        latitude: this.latitude + (kilometers / 6378) * (180 / math.pi),
+        longitude: this.longitude +
+            (kilometers / 6378) *
+                (180 / math.pi) /
+                math.cos(this.latitude * math.pi / 180));
+  }
+
   factory Point.fromMap(Map map) => Point(
         latitude: doubleFromJson(map, "latitude"),
         longitude: doubleFromJson(map, "longitude"),
@@ -182,6 +193,26 @@ class BoundingBox {
     @required this.southWest,
     @required this.northEast,
   });
+
+  Point get northWest => Point(
+    latitude: northEast.latitude,
+    longitude: southWest.longitude,
+  );
+
+  Point get southEast => Point(
+    latitude: southWest.latitude,
+    longitude: northEast.longitude,
+  );
+
+  factory BoundingBox.squareFromPoint({
+    @required Point point,
+    @required double kilometers,
+  }) {
+    return BoundingBox(
+      southWest: point.add(-(kilometers / 2)),
+      northEast: point.add(kilometers / 2),
+    );
+  }
 
   Map toMap() => {
         "southWest": southWest.toMap(),
