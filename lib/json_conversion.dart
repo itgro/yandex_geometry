@@ -1,3 +1,6 @@
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+
 import 'yandex_geometry.dart';
 
 valueFromJsonIfExists(Map model, field, {defaultValue}) {
@@ -79,11 +82,67 @@ int intFromJson(Map model, field, {int defaultValue}) {
   if (value is String) {
     try {
       return int.tryParse(value);
-    } catch (e) {}
+    } catch (error) {
+      debugPrint(error);
+    }
   }
 
   if (value is double) {
     return value.round();
+  }
+
+  return defaultValue;
+}
+
+Color colorFromJson(Map model, field, {Color defaultValue}) {
+  String value = stringFromJson(
+    model,
+    field,
+    defaultValue: '#FFFFFF',
+  ).replaceAll("#", "");
+
+  if (value.length < 8) {
+    value = "FF$value";
+  }
+
+  if (value.length != 8) {
+    debugPrint("Incorrect color value $value");
+
+    return defaultValue;
+  }
+
+  try {
+    return Color(
+      int.tryParse('0x$value', radix: 16),
+    );
+  } catch (error) {
+    debugPrint(error);
+  }
+
+  return defaultValue;
+}
+
+DateTime dateTimeFromJson(
+  Map model,
+  field, {
+  DateTime defaultValue,
+  DateFormat format,
+  bool utc = true,
+}) {
+  if (format == null) {
+    format = DateFormat("yyyy-MM-dd hh:mm:ms");
+  }
+
+  dynamic value = stringFromJson(model, field);
+
+  if (value == null) {
+    return defaultValue;
+  }
+
+  try {
+    return format.parse(value, utc);
+  } catch (error) {
+    debugPrint(error);
   }
 
   return defaultValue;
